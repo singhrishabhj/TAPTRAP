@@ -73,13 +73,17 @@ export function generateTapZones(
   isZen: boolean
 ): ZoneArea[] {
   const numZones = isZen ? 3 : score < 15 ? 2 : 1;
-  const zoneWidth = isZen ? 0.6 : Math.max(0.15, 0.4 - score * 0.008);
+  const zoneWidth = isZen ? 0.65 : Math.max(0.18, 0.45 - score * 0.008);
+
+  // Place zones AHEAD of the ball so the player can see them coming.
+  // At base speed (~1.08 rad/s), π*0.65 ≈ 2 rad ahead = ~1.85 seconds warning.
+  const LOOK_AHEAD = Math.PI * 0.65;
 
   const zones: ZoneArea[] = [];
   for (let i = 0; i < numZones; i++) {
     const offset = (i / numZones) * Math.PI * 2;
     const startAngle =
-      currentAngle + offset + (Math.random() - 0.5) * 0.5;
+      currentAngle + LOOK_AHEAD + offset + (Math.random() - 0.5) * 0.3;
     zones.push({
       startAngle,
       endAngle: startAngle + zoneWidth,
@@ -87,6 +91,10 @@ export function generateTapZones(
     });
   }
   return zones;
+}
+
+function normalize(a: number): number {
+  return ((a % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
 }
 
 export function generateFakeZones(
@@ -97,17 +105,27 @@ export function generateFakeZones(
   const numFakes = score < 15 ? 1 : score < 25 ? 2 : 3;
   const fakes: ZoneArea[] = [];
 
+  // Normalize real zone angles once for reliable comparison
+  const normRealZones = realZones.map((z) => ({
+    start: normalize(z.startAngle),
+    end: normalize(z.endAngle),
+  }));
+
   for (let i = 0; i < numFakes; i++) {
     let attempts = 0;
-    while (attempts < 20) {
-      const angle = Math.random() * Math.PI * 2;
-      const overlap = realZones.some(
-        (z) =>
-          Math.abs(angle - z.startAngle) < 0.4 ||
-          Math.abs(angle - z.endAngle) < 0.4
-      );
+    while (attempts < 30) {
+      const angle = Math.random() * Math.PI * 2; // already normalized [0, 2π)
+      const MIN_GAP = 0.5; // minimum angular gap from any real zone edge
+      const overlap = normRealZones.some((z) => {
+        const dStart = Math.abs(angle - z.start);
+        const dEnd = Math.abs(angle - z.end);
+        // Account for wrap-around
+        const distStart = Math.min(dStart, Math.PI * 2 - dStart);
+        const distEnd = Math.min(dEnd, Math.PI * 2 - dEnd);
+        return distStart < MIN_GAP || distEnd < MIN_GAP;
+      });
       if (!overlap) {
-        fakes.push({ startAngle: angle, endAngle: angle + 0.2, width: 0.2 });
+        fakes.push({ startAngle: angle, endAngle: angle + 0.22, width: 0.22 });
         break;
       }
       attempts++;

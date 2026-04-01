@@ -533,7 +533,7 @@ export default function MainGame({
               { bottom: bottomInset + 24 },
             ]}
           >
-            tap when the dot is in position
+            tap when the dot reaches the glowing arc
           </Text>
         )}
       </View>
