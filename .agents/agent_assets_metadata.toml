@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "jTfNTr7sdsvC3BrAxlq1F"
+uri = "file://artifacts/taptrap-mobile/assets/images/icon.png"
+type = "image"
+title = "taptrap game icon"

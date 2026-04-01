@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/taptrap-mobile/"
+title = "TapTrap Mobile"
+version = "1.0.0"
+id = "artifacts/taptrap-mobile"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/taptrap-mobile/" ]
+localPort = 19794
+
+[services.development]
+run = "pnpm --filter @workspace/taptrap-mobile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/taptrap-mobile", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/taptrap-mobile", "run", "serve" ]
+
+[services.env]
+PORT = "19794"
+BASE_PATH = "/taptrap-mobile/"

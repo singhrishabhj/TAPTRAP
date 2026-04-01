@@ -1,0 +1,82 @@
+Convert the existing TapTrap web app into a **mobile app for both iOS and Android** using **React Native with Expo (Expo Go + EAS build)** so it can be easily built and uploaded to App Store and Play Store.
+
+Do NOT rebuild logic from scratch—reuse the core game logic, timing system, scoring, and UI structure from the web version, but adapt it properly for mobile performance and touch handling.
+
+APP REQUIREMENTS:
+
+* Use **Expo (latest stable)** with React Native
+* Ensure compatibility with both **Android and iOS**
+* Structure code cleanly (components, hooks, utils)
+* Optimize for **smooth 60fps gameplay**
+* Use **TouchableWithoutFeedback / Gesture Handler** for instant tap response (no delay)
+
+UI + DESIGN:
+
+* Maintain premium look (dark mode, neon glow, minimal UI)
+* Use mobile-safe layouts (SafeAreaView)
+* Ensure perfect responsiveness across screen sizes
+* Smooth animations using Reanimated or Animated API
+
+FEATURE IMPLEMENTATION:
+
+* Splash screen (use Expo Splash API or custom screen)
+* Name input screen (store using AsyncStorage instead of localStorage)
+* Main game screen (optimized rendering loop using requestAnimationFrame or Reanimated)
+* Game over overlay (instant restart on tap)
+
+DEVICE FEATURES:
+
+* Add **Haptic Feedback** using expo-haptics
+* Add sound using expo-av (tap sound, near-miss effect, background loop)
+* Ensure low latency audio playback
+
+STORAGE:
+
+* Replace localStorage with **AsyncStorage**
+* Store name, best score, streak, stats locally
+
+SETTINGS + STATS:
+
+* Fully functional settings screen (sound, haptics, theme, reset data, change name)
+* Stats screen (best score, total plays, reaction time, streak)
+
+PERFORMANCE:
+
+* Avoid heavy libraries
+* Use lightweight assets
+* Ensure fast startup time
+* Optimize re-renders (useMemo, useCallback where needed)
+
+BUILD & DEPLOYMENT (VERY IMPORTANT):
+
+* Configure app.json / app.config properly:
+
+  * App name: TapTrap
+  * Bundle identifier (iOS)
+  * Package name (Android)
+  * App icon and splash
+* Use **EAS Build** for production builds
+* Ensure app is ready for:
+
+  * Google Play Store upload (AAB)
+  * Apple App Store upload (IPA)
+
+PERMISSIONS:
+
+* Only request necessary permissions (haptics, sound)
+* No unnecessary access
+
+FINAL OUTPUT:
+
+* Fully working Expo project
+* Clean folder structure
+* Ready-to-build configuration
+* Step-by-step commands to:
+
+  * Run locally (Expo Go)
+  * Build APK/AAB (Android)
+  * Build IPA (iOS)
+  * Upload to stores
+
+GOAL:
+Deliver a production-ready mobile version of TapTrap that feels premium, runs smoothly, and can be directly built and published on both platforms with minimal effort.

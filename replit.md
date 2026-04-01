@@ -18,6 +18,19 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 
 ## Artifacts
 
+### TapTrap Mobile (`artifacts/taptrap-mobile`)
+Expo React Native mobile app — full reimplementation of the TapTrap arcade game for iOS/Android.
+- **Screens**: Splash → Name Input → Main Menu → Game (3-countdown) → Game Over → Settings (modal) → Stats (modal)
+- **Game modes**: Endless (progressively harder) and Zen (slow, forgiving)
+- **Features**: Ghost trail, near-miss detection, 3-theme system (neon/retro/gold with score-gated unlocks), haptics, focus level scoring, day streak, share sheet
+- **Storage**: AsyncStorage (no backend)
+- **Font**: Space Mono (400/700)
+- **Color palette**: Pure dark — `#080a10` background, `#a64dff` neon, `#ff44c8` pink, `#ffcc33` gold, `#33ff88` green
+- **Key packages**: `@expo-google-fonts/space-mono`, `@react-native-async-storage/async-storage`, `expo-haptics`
+- Entry: `artifacts/taptrap-mobile/app/index.tsx` (single-screen, no tabs)
+- Game logic: `artifacts/taptrap-mobile/lib/gameEngine.ts`
+- Storage: `artifacts/taptrap-mobile/lib/storage.ts`
+
 ### TapTrap (`artifacts/taptrap`)
 Mobile-first arcade mini-game built with React + Vite. No backend — all data stored in localStorage.
 - **Screens**: Splash → Name Input → Main Game → Game Over → Settings → Stats
