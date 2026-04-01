@@ -16,6 +16,19 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
 
+## Artifacts
+
+### TapTrap (`artifacts/taptrap`)
+Mobile-first arcade mini-game built with React + Vite. No backend — all data stored in localStorage.
+- **Screens**: Splash → Name Input → Main Game → Game Over → Settings → Stats
+- **Gameplay**: Dot moves along a path; player taps at the perfect moment to survive. Wrong timing = instant fail.
+- **Features**: CRT grain, neon glow, glassmorphism, ghost trail, near-miss slow-mo, share card (canvas), progression unlocks (glow trail at 20, pulse+zen at 50, gold theme at 100)
+- **Tech**: framer-motion animations, Web Audio API for sounds, Vibration API for haptics, canvas share image
+- Entry: `artifacts/taptrap/src/App.tsx`
+- Game logic: `artifacts/taptrap/src/lib/gameEngine.ts`
+- Audio: `artifacts/taptrap/src/lib/audio.ts`
+- Storage: `artifacts/taptrap/src/lib/storage.ts`
+
 ## Structure
 
 ```text

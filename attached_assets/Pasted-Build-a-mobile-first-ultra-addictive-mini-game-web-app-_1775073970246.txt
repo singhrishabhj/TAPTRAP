@@ -1,0 +1,115 @@
+Build a mobile-first ultra-addictive mini-game web app called **TapTrap** with a premium minimalist arcade aesthetic (dark mode, neon glow, subtle CRT grain, glassmorphism UI, smooth 60fps animations). Optimize for low cost (use Vite + React, no backend, minimal dependencies, small bundle size). No login—ask player name once and store in localStorage.
+
+SPLASH SCREEN:
+Show a 2–3 second cinematic intro with “TapTrap” and tagline “You were so close.” Add neon pulse animation, soft bass sound, and smooth fade transition. Include small text: “Made for focus & reflex.”
+
+USER FLOW:
+Splash → Name Input (first time only) → Main Game → Game Over Overlay → Restart instantly. No friction anywhere.
+
+NAME INPUT SCREEN:
+Minimal UI, glowing input box, “Enter your name”. Store locally. Show subtle animation on submit.
+
+MAIN GAME SCREEN:
+
+* Show player name (top)
+* Score (center focus)
+* Best score (top corner)
+* Clean background with subtle motion
+* Game runs instantly on load
+
+CORE GAMEPLAY:
+Dot moves automatically. Player taps at the perfect moment to survive. No visible timing indicators. Wrong timing = instant fail. One-tap only. Speed increases. Patterns shift. Occasional fake patterns.
+
+ADDICTION HOOKS:
+
+* Show exact timing error (e.g. “0.05s too early”)
+* Flash “SO CLOSE” on near miss
+* Show “Almost beat your best (X)”
+* Ghost trail of best run
+* Dynamic text: “Again.”, “You had it.”, “Don’t stop.”
+
+GAME OVER OVERLAY:
+
+* Score
+* Best score
+* Timing error
+* Motivational text
+* Tap anywhere to restart instantly (<0.5s)
+
+PROGRESSION:
+
+* Reaction score (improves over time)
+* Focus level badge
+* Unlock visuals:
+
+  * 20 → glow trail
+  * 50 → pulse effect + Zen Mode
+  * 100 → gold premium theme
+
+GAME MODES:
+
+* Endless (default)
+* Zen Mode (visible timing zones, slower gameplay)
+
+SETTINGS SCREEN (IMPORTANT – PREMIUM CONTROL PANEL):
+Accessible via small icon (top corner). Use glassmorphism panel.
+
+Settings options:
+
+* Sound: ON/OFF
+* Music: ON/OFF
+* Haptic feedback: ON/OFF
+* Graphics mode: High / Low (for performance devices)
+* Theme selection (unlock-based):
+
+  * Default neon
+  * Retro green
+  * Gold (unlock at 100)
+* Reset data button (clears name, score, stats)
+* Change name option
+* Toggle ghost trail ON/OFF
+* Toggle motivational text ON/OFF
+* Language-ready structure (default English)
+
+STATS SCREEN:
+
+* Best score
+* Total plays
+* Average reaction time
+* Current streak (days played)
+* Focus level
+* Simple clean layout (no backend, all localStorage)
+
+PREMIUM FEEL:
+
+* Instant tap response (no delay)
+* Satisfying click + bass sound
+* Near miss = slow motion + echo
+* Micro haptic feedback
+* Smooth easing animations everywhere
+* No clutter UI
+
+VIRAL FEATURES:
+
+* “Share your failure” card (canvas-generated image with name + score)
+* Show “You lost 0.03s before your best”
+* Ego-trigger design
+
+TECH REQUIREMENTS:
+
+* React + Vite
+* Mobile-first responsive
+* localStorage for all data
+* No backend, no authentication
+* Lightweight, fast loading
+* Clean modular code
+
+GOAL:
+Create a brutally simple, psychologically addictive game where:
+
+* Player restarts instantly
+* Failure feels personal
+* Winning feels just within reach
+* User keeps thinking: “Bas ek aur try…”
+
+Deliver full working code with premium UI, smooth animations, optimized performance, and complete screens including settings and stats.
