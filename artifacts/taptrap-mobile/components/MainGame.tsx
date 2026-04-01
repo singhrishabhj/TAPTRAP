@@ -73,7 +73,6 @@ export default function MainGame({
 }: Props) {
   const insets = useSafeAreaInsets();
   const [score, setScore] = useState(0);
-  const [angle, setAngle] = useState(0);
   const [tapZones, setTapZones] = useState<ZoneArea[]>([]);
   const [fakeZones, setFakeZones] = useState<ZoneArea[]>([]);
   const [ghostTrail, setGhostTrail] = useState<DotPosition[]>([]);
@@ -84,6 +83,7 @@ export default function MainGame({
   const [countdown, setCountdown] = useState(3);
   const [isStarted, setIsStarted] = useState(false);
 
+  // Refs for gameplay-critical values — never stale, always current
   const angleRef = useRef(0);
   const scoreRef = useRef(0);
   const isAliveRef = useRef(true);
@@ -92,6 +92,12 @@ export default function MainGame({
   const rafRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
   const phaseRef = useRef(0);
   const lastTimeRef = useRef(0);
+  const trailTickRef = useRef(0);
+
+  // Animated values driven directly from the rAF loop via setValue() —
+  // zero React re-render lag, visual always matches game logic exactly
+  const dotXAnim = useRef(new Animated.Value(0)).current;
+  const dotYAnim = useRef(new Animated.Value(0)).current;
 
   // Animations
   const scoreScale = useRef(new Animated.Value(1)).current;
@@ -178,13 +184,19 @@ export default function MainGame({
         ARENA_RADIUS
       );
 
-      setAngle(angleRef.current);
+      // Drive visual directly — no React re-render needed, zero lag
+      dotXAnim.setValue(pos.x);
+      dotYAnim.setValue(pos.y);
 
+      // Throttle ghost trail to ~20fps to avoid hammering React
       if (settings.ghostTrail && settings.graphicsMode === "high") {
-        setGhostTrail((prev) => {
-          const next = [...prev, pos];
-          return next.slice(-GHOST_MAX);
-        });
+        trailTickRef.current++;
+        if (trailTickRef.current % 3 === 0) {
+          setGhostTrail((prev) => {
+            const next = [...prev, pos];
+            return next.slice(-GHOST_MAX);
+          });
+        }
       }
 
       rafRef.current = requestAnimationFrame(tick);
@@ -204,9 +216,9 @@ export default function MainGame({
     const zones = tapZonesRef.current;
     const fakes = fakeZonesRef.current;
 
-    const fakeHit = checkTapZone(currentAngle, fakes, 0.05);
-    const hit = checkTapZone(currentAngle, zones, 0);
-    const nearHit = !hit && checkTapZone(currentAngle, zones, 0.18);
+    const fakeHit = checkTapZone(currentAngle, fakes, 0.04);
+    const hit = checkTapZone(currentAngle, zones, 0.06);   // small tolerance — fairness
+    const nearHit = !hit && checkTapZone(currentAngle, zones, 0.2);
 
     if (hit && !fakeHit) {
       // Correct tap
@@ -282,14 +294,11 @@ export default function MainGame({
     }
   }, [isStarted, settings, bestScore, onGameOver]);
 
-  const pattern = getPatternForScore(score);
-  const dotPos = getDotPosition(angle, pattern, phaseRef.current, ARENA_RADIUS);
-
   const centerX = width / 2;
   const centerY = height / 2 - 20;
 
   return (
-    <Pressable onPress={handleTap} testID="game-area" style={{ flex: 1 }}>
+    <Pressable onPressIn={handleTap} testID="game-area" style={{ flex: 1 }}>
       <View style={styles.container}>
         {/* Ambient glow */}
         <View
@@ -457,9 +466,10 @@ export default function MainGame({
             });
           })}
 
-          {/* Main dot */}
+          {/* Main dot — position driven directly by Animated.Value via setValue()
+              from the rAF loop, zero React render lag, always in sync with logic */}
           {isAlive && (
-            <View
+            <Animated.View
               style={[
                 styles.dot,
                 {
@@ -467,8 +477,12 @@ export default function MainGame({
                   height: DOT_SIZE,
                   borderRadius: DOT_SIZE / 2,
                   backgroundColor: themePrimary,
-                  left: ARENA_RADIUS + dotPos.x - DOT_SIZE / 2,
-                  top: ARENA_RADIUS + dotPos.y - DOT_SIZE / 2,
+                  left: ARENA_RADIUS - DOT_SIZE / 2,
+                  top: ARENA_RADIUS - DOT_SIZE / 2,
+                  transform: [
+                    { translateX: dotXAnim },
+                    { translateY: dotYAnim },
+                  ],
                   boxShadow: `0 0 12px ${themePrimary}`,
                 } as any,
               ]}
