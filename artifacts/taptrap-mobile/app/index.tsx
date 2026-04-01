@@ -16,6 +16,7 @@ import {
 } from "@/lib/storage";
 import SplashScreen from "@/components/SplashScreen";
 import NameInput from "@/components/NameInput";
+import TutorialScreen from "@/components/TutorialScreen";
 import MainMenu from "@/components/MainMenu";
 import MainGame from "@/components/MainGame";
 import GameOver from "@/components/GameOver";
@@ -25,6 +26,7 @@ import StatsScreen from "@/components/StatsScreen";
 type Screen =
   | "splash"
   | "name"
+  | "tutorial"
   | "menu"
   | "game"
   | "gameover";
@@ -55,6 +57,8 @@ export default function App() {
     if (!isLoaded) return;
     if (!stats.playerName) {
       setScreen("name");
+    } else if (!stats.hasSeenTutorial) {
+      setScreen("tutorial");
     } else {
       setScreen("menu");
     }
@@ -62,6 +66,13 @@ export default function App() {
 
   function handleNameSubmit(name: string) {
     const updated = { ...stats, playerName: name };
+    setStats(updated);
+    saveStats(updated);
+    setScreen("tutorial");
+  }
+
+  function handleTutorialDone() {
+    const updated = { ...stats, hasSeenTutorial: true };
     setStats(updated);
     saveStats(updated);
     setScreen("menu");
@@ -127,6 +138,10 @@ export default function App() {
 
       {screen === "name" && (
         <NameInput onSubmit={handleNameSubmit} />
+      )}
+
+      {screen === "tutorial" && (
+        <TutorialScreen onDone={handleTutorialDone} />
       )}
 
       {screen === "menu" && (

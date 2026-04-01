@@ -11,6 +11,7 @@ export interface GameStats {
   focusLevel: number;
   unlockedThemes: string[];
   unlockedEffects: string[];
+  hasSeenTutorial: boolean;
 }
 
 export interface GameSettings {
@@ -36,6 +37,7 @@ export const defaultStats: GameStats = {
   focusLevel: 1,
   unlockedThemes: ["neon"],
   unlockedEffects: [],
+  hasSeenTutorial: false,
 };
 
 export const defaultSettings: GameSettings = {

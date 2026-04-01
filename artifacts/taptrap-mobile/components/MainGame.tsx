@@ -404,27 +404,58 @@ export default function MainGame({
               />
             ))}
 
-          {/* Zen tap zones */}
-          {gameMode === "zen" &&
-            tapZones.map((zone, i) => {
-              const mid = (zone.startAngle + zone.endAngle) / 2;
-              const zx = ARENA_RADIUS + ARENA_RADIUS * Math.cos(mid);
-              const zy = ARENA_RADIUS + ARENA_RADIUS * Math.sin(mid);
+          {/* Tap zone arc indicators — always visible */}
+          {tapZones.map((zone, zi) => {
+            const steps = 9;
+            return Array.from({ length: steps }, (_, k) => {
+              const a = zone.startAngle + (k / (steps - 1)) * (zone.endAngle - zone.startAngle);
+              const isMid = k === Math.floor(steps / 2);
+              const dotSz = isMid ? 10 : 5;
+              const px = ARENA_RADIUS + ARENA_RADIUS * Math.cos(a);
+              const py = ARENA_RADIUS + ARENA_RADIUS * Math.sin(a);
+              const col = gameMode === "zen" ? C.neonGreen : themePrimary;
               return (
                 <View
-                  key={i}
+                  key={`zone-${zi}-${k}`}
                   style={{
                     position: "absolute",
-                    width: 20,
-                    height: 20,
-                    borderRadius: 10,
-                    backgroundColor: `${C.neonGreen}44`,
-                    left: zx - 10,
-                    top: zy - 10,
+                    width: dotSz,
+                    height: dotSz,
+                    borderRadius: dotSz / 2,
+                    backgroundColor: col,
+                    opacity: isMid ? 0.55 : 0.2,
+                    left: px - dotSz / 2,
+                    top: py - dotSz / 2,
                   }}
                 />
               );
-            })}
+            });
+          })}
+
+          {/* Fake zone arc indicators (danger markers) */}
+          {fakeZones.map((zone, zi) => {
+            const steps = 5;
+            return Array.from({ length: steps }, (_, k) => {
+              const a = zone.startAngle + (k / (steps - 1)) * (zone.endAngle - zone.startAngle);
+              const px = ARENA_RADIUS + ARENA_RADIUS * Math.cos(a);
+              const py = ARENA_RADIUS + ARENA_RADIUS * Math.sin(a);
+              return (
+                <View
+                  key={`fake-${zi}-${k}`}
+                  style={{
+                    position: "absolute",
+                    width: 4,
+                    height: 4,
+                    borderRadius: 2,
+                    backgroundColor: "#882020",
+                    opacity: 0.4,
+                    left: px - 2,
+                    top: py - 2,
+                  }}
+                />
+              );
+            });
+          })}
 
           {/* Main dot */}
           {isAlive && (
