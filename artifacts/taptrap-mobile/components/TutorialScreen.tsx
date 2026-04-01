@@ -73,12 +73,12 @@ export default function TutorialScreen({ onDone }: Props) {
       }),
     ]).start();
 
-    // Continuous dot rotation
+    // Continuous dot rotation — native driver safe (uses transform, not left/top)
     const loop = Animated.loop(
       Animated.timing(angle, {
-        toValue: Math.PI * 2,
+        toValue: 1,
         duration: 2800,
-        useNativeDriver: false,
+        useNativeDriver: true,
       })
     );
     loop.start();
@@ -184,15 +184,6 @@ export default function TutorialScreen({ onDone }: Props) {
 
   const cx = width / 2;
   const cy = height * 0.38;
-
-  const dotX = angle.interpolate({
-    inputRange: [0, Math.PI * 2],
-    outputRange: [cx + DEMO_RADIUS - DOT / 2, cx + DEMO_RADIUS - DOT / 2],
-  });
-  const dotY = angle.interpolate({
-    inputRange: [0, Math.PI * 2],
-    outputRange: [cy + 0 - DOT / 2, cy + 0 - DOT / 2],
-  });
 
   const s = STEPS[step];
 
@@ -355,6 +346,24 @@ export default function TutorialScreen({ onDone }: Props) {
   );
 }
 
+// Build a circular keyframe table so we can use useNativeDriver: true
+// angle goes 0→1 (one full revolution), mapped to cos/sin offsets
+const N_KEYS = 48;
+function buildCircleInterpolation(
+  radius: number,
+  axis: "x" | "y"
+): { inputRange: number[]; outputRange: number[] } {
+  const inputRange: number[] = [];
+  const outputRange: number[] = [];
+  for (let i = 0; i <= N_KEYS; i++) {
+    const t = i / N_KEYS;
+    const rad = t * Math.PI * 2;
+    inputRange.push(t);
+    outputRange.push(axis === "x" ? radius * Math.cos(rad) : radius * Math.sin(rad));
+  }
+  return { inputRange, outputRange };
+}
+
 function AnimatedDot({
   angle,
   cx,
@@ -372,26 +381,11 @@ function AnimatedDot({
   color: string;
   opacity: Animated.Value;
 }) {
-  const left = angle.interpolate({
-    inputRange: [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2, Math.PI * 2],
-    outputRange: [
-      cx + radius - dotSize / 2,
-      cx + 0 - dotSize / 2,
-      cx - radius - dotSize / 2,
-      cx + 0 - dotSize / 2,
-      cx + radius - dotSize / 2,
-    ],
-  });
-  const top = angle.interpolate({
-    inputRange: [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2, Math.PI * 2],
-    outputRange: [
-      cy + 0 - dotSize / 2,
-      cy + radius - dotSize / 2,
-      cy + 0 - dotSize / 2,
-      cy - radius - dotSize / 2,
-      cy + 0 - dotSize / 2,
-    ],
-  });
+  const xInterp = buildCircleInterpolation(radius, "x");
+  const yInterp = buildCircleInterpolation(radius, "y");
+
+  const translateX = angle.interpolate(xInterp);
+  const translateY = angle.interpolate(yInterp);
 
   return (
     <Animated.View
@@ -401,9 +395,10 @@ function AnimatedDot({
         height: dotSize,
         borderRadius: dotSize / 2,
         backgroundColor: color,
-        left,
-        top,
+        left: cx - dotSize / 2,
+        top: cy - dotSize / 2,
         opacity,
+        transform: [{ translateX }, { translateY }],
       }}
     />
   );
